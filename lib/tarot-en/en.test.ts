@@ -75,3 +75,15 @@ test("영문 C: 결정형 teaser는 결론을 드러내지 않는다", () => {
   const r = parseC({ teaser_headline: "Take the new offer, the three cards answered", teaser_lead: "Jamie, you've held onto that question for a long time, and the three cards gave a clearer answer than you might expect." }, { decision: true, strength: d.lean!.strength, frame, lean: d.lean });
   assert.ok(r.errors.some((x) => x.includes("결론")));
 });
+
+test("v1.2.4 영문 결제 전 흐림 예시는 고민 영역별 세트(연애 단계·영역), 이름 없음", () => {
+  const BS = data.copy.result.blur_samples as unknown as { sets: Record<string, Record<string, string>> };
+  type Args = Parameters<typeof buildUnpaidPages>[0];
+  const run = (f: Args["frame"], c: Args["cls"]) => sanitizeUnpaid(buildUnpaidPages({ name: "Jamie", cls: c, picks, safety, worryText: "x", frame: f, lean: null, C: null, locale: "en" }), "en");
+  const love = run({ ...frame, area: "LOV", love_status: "dating" } as Args["frame"], cls);
+  assert.equal(love[4].blur, BS.sets.LOV_DATING["5"]);
+  assert.equal(love[8].blur, BS.sets.LOV_DATING["9"]);
+  assert.equal(run(null, cls)[4].blur, BS.sets.CAR["5"], "영역 = cls.domain");
+  assert.equal(run(null, null)[4].blur, BS.sets.GEN["5"], "분류 없음 = GEN");
+  assert.ok(!JSON.stringify(love.map((p) => p.blur)).includes("Minjun"));
+});
