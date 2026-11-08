@@ -10,10 +10,10 @@ import { worryUserMessage } from "./prompts";
 // 이 파일은 엑셀(judge-db/쏠타로_판별DB_*.xlsx '고민 틀 정답(T6)' 시트)에서 scripts/judge_db_frame_gold.py로 만든다.
 // Vercel에 같이 실리도록 next.config.ts outputFileTracingIncludes에 넣어 두었다.
 // 색인을 못 만들면(파일 없음 등) 예시 없이 예전처럼 고민만 보내고 두 번째 의견은 건너뛴다(README_v4 대체 경로).
-// 영문판은 같은 490건을 영어로 옮긴 judge-db/data/frame_gold_en_v1.2.jsonl(기획 전달본, text = 영어 고민).
+// 영문판 = judge-db/data/frame_gold_en_v2.jsonl(1,446건 — 합성 490(v1.2와 같음) + 실제 고민 956건 익명판을 미국 영어로 옮긴 것, 기획 전달 2026-11-08). v1.2는 기록용으로 남김.
 const GOLD: Record<Locale, string> = {
   ko: path.join(process.cwd(), "judge-db/data/frame_gold_v2.1.jsonl"), // v2.3.4 + owner 익명화판(2026-11-05): 합성 490 + 실제 956(익명화·문체 변경)
-  en: path.join(process.cwd(), "judge-db/data/frame_gold_en_v1.2.jsonl"),
+  en: path.join(process.cwd(), "judge-db/data/frame_gold_en_v2.jsonl"),
 };
 
 type Index = ReturnType<typeof buildIndex>;
