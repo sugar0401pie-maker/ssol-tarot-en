@@ -1,0 +1,291 @@
+@import "tailwindcss";
+
+/* 디자인 가이드 2장 색 토큰 — "달밤에서 새벽으로". 시안이 바뀌면 night/gold/moon/card-cream/card-line만 다시 뽑는다. */
+:root {
+  --night: #012f53;
+  --night-deep: #001e38;
+  --gold: #e3c68e;
+  --gold-soft: #f3e2be;
+  --moon: #fcefd4;
+  --card-cream: #fef3de;
+  --card-line: #204870;
+  --dawn-sky: #a8c4de;
+  --dawn-peach: #fae4cd;
+  --navy: #013566;
+  --ink: #1c2b3a;
+  color-scheme: light;
+}
+
+@theme inline {
+  --color-night: var(--night);
+  --color-cream: var(--moon); /* 아스트로에서 옮긴 로그인 화면이 text-cream을 쓴다 */
+  --color-night-deep: var(--night-deep);
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+  --color-moon: var(--moon);
+  --color-card-cream: var(--card-cream);
+  --color-card-line: var(--card-line);
+  --color-dawn-sky: var(--dawn-sky);
+  --color-dawn-peach: var(--dawn-peach);
+  --color-navy: var(--navy);
+  --color-ink: var(--ink);
+  --font-sans: var(--font-noto-sans-kr), system-ui, sans-serif;
+  --font-serif: var(--font-gowun-batang), serif;
+}
+
+body {
+  background: var(--night);
+  color: var(--moon);
+  font-family: var(--font-noto-sans-kr), system-ui, sans-serif;
+}
+
+/* 밤 화면 배경(design-preview .night): 위쪽이 살짝 밝은 원형 그라데이션 → night → night-deep */
+.night-bg {
+  background: radial-gradient(120% 70% at 50% 0%, #0a4373 0%, var(--night) 45%, var(--night-deep) 100%);
+}
+.dawn-bg {
+  background: var(--card-cream);
+  color: var(--ink);
+}
+
+/* 이중 금선 프레임(인트로~고민 쓰기) */
+.gold-frame {
+  position: relative;
+}
+.gold-frame::before,
+.gold-frame::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  border: 1px solid var(--gold);
+  border-radius: 18px;
+  opacity: 0.55;
+}
+.gold-frame::before {
+  inset: 10px;
+}
+.gold-frame::after {
+  inset: 15px;
+  opacity: 0.3;
+}
+
+/* 별가루 */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 0.9; }
+}
+.star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 9999px;
+  background: var(--gold-soft);
+  animation: twinkle 4s ease-in-out infinite; /* 주기는 별마다 3~6초(Stars에서 지정, 디자인 가이드) */
+}
+/* 금선 프레임 모서리 장식(디자인 가이드 4장: 조개·불가사리 SVG 4개) */
+.frame-corner { position: absolute; width: 26px; height: 26px; color: var(--gold); opacity: 0.8; pointer-events: none; z-index: 1; }
+/* 경험 질문 아래 초승달 원호(design-preview .moonarc) */
+.moonarc { width: 36px; height: 12px; border: 1.5px solid var(--gold); border-top: none; border-radius: 0 0 36px 36px; opacity: 0.8; }
+/* 대기 엠블럼: 카드 뒷면 가운데(달 속 두 물결)를 원으로 잘라 18초에 한 바퀴(design-preview .emb) */
+.wait-emb { width: 150px; height: 150px; border-radius: 50%; overflow: hidden; box-shadow: 0 0 40px #e3c68e44; animation: wait-spin 18s linear infinite; }
+.wait-emb img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.55); }
+@keyframes wait-spin { to { transform: rotate(360deg); } }
+/* 섞기 화면: 섞는 동안 금빛 잔상, 다 섞이면 물결 빛 한 번, [지금 뽑을게요]면 더미가 아래로 내려가며 사라짐(스펙 7.4) */
+.shuffle-zone { transition: transform 0.48s cubic-bezier(0.5, 0, 0.75, 0), opacity 0.48s; }
+.shuffle-zone .mystic-ring, .shuffle-zone .mystic-orbit { transition: opacity 0.6s; }
+.shuffle-zone:not(.is-mixing) .mystic-orbit, .shuffle-zone:not(.is-mixing) .mystic-ring { opacity: 0; }
+.shuffle-zone.is-mixing .shuffle-card { filter: drop-shadow(0 0 10px rgba(227, 198, 142, 0.55)); }
+.shuffle-zone.is-leaving { transform: translateY(160px) scale(0.92); opacity: 0; }
+.shuffle-shine { position: absolute; inset: -6px; border-radius: 10px; pointer-events: none; opacity: 0;
+  background: linear-gradient(115deg, transparent 30%, rgba(252, 239, 212, 0.55) 48%, rgba(227, 198, 142, 0.35) 52%, transparent 70%);
+  background-size: 250% 100%; background-position: 120% 0; }
+.shuffle-zone.is-done .shuffle-shine { animation: shuffle-shine 1.1s ease-out 0.25s 1 both; }
+@keyframes shuffle-shine { 0% { opacity: 1; background-position: 120% 0; } 100% { opacity: 0; background-position: -60% 0; } }
+/* 섞기·대기의 신비한 연출(owner 2026-10-20): 엠블럼 + 반대로 도는 카드·별 고리 + 3초마다 바뀌며 깜빡이는 문구 */
+.mystic { position: relative; width: 280px; height: 280px; display: flex; align-items: center; justify-content: center; }
+.mystic-ring { position: absolute; inset: 22px; border-radius: 50%; }
+.mystic-ring-dash { border: 1px dashed rgba(227, 198, 142, 0.55); animation: wait-spin 40s linear infinite reverse; }
+.mystic-orbit { position: absolute; inset: 0; }
+.mystic-orbit-cards { animation: wait-spin 14s linear infinite; }
+.mystic-orbit-stars { animation: wait-spin 9s linear infinite reverse; }
+.mystic-card, .mystic-star { position: absolute; left: 50%; top: 50%; transform-origin: 0 0; }
+.mystic-card img { display: block; width: 34px; height: 51px; margin: -25px 0 0 -17px; border-radius: 4px; box-shadow: 0 0 12px rgba(227, 198, 142, 0.5); }
+.mystic-star { color: var(--gold); font-size: 13px; line-height: 1; margin: -7px 0 0 -6px; animation: twinkle 2.4s ease-in-out infinite; }
+.mystic-center { position: relative; z-index: 1; width: 130px; height: 130px; }
+.mystic-line { animation: mystic-in 0.6s ease-out, mystic-blink 2s ease-in-out 0.6s infinite; }
+@keyframes mystic-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes mystic-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+/* 버튼 — 밤: moon 채움 / 보조: 금테 투명. 아침: navy 채움 */
+.btn-night {
+  background: var(--moon);
+  color: var(--night);
+}
+.btn-night-ghost {
+  background: transparent;
+  color: var(--moon);
+  border: 1px solid var(--gold);
+}
+.input-night {
+  background: var(--moon);
+  color: var(--ink);
+  border: 1px solid var(--gold);
+  border-radius: 14px;
+}
+.input-night:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(227, 198, 142, 0.45);
+}
+
+/* 셔플: 카드 더미가 좌우로 갈라졌다 겹치기 */
+@keyframes shuffle-left {
+  0%, 100% { transform: translateX(0) rotate(0); }
+  25% { transform: translateX(-62px) rotate(-8deg); }
+  50% { transform: translateX(0) rotate(0); }
+  75% { transform: translateX(-40px) rotate(-5deg); }
+}
+@keyframes shuffle-right {
+  0%, 100% { transform: translateX(0) rotate(0); }
+  25% { transform: translateX(62px) rotate(8deg); }
+  50% { transform: translateX(0) rotate(0); }
+  75% { transform: translateX(40px) rotate(5deg); }
+}
+@keyframes shuffle-spin {
+  0% { transform: translateY(0) rotate(0); }
+  50% { transform: translateY(-46px) rotate(180deg); }
+  100% { transform: translateY(0) rotate(360deg); }
+}
+.shuffle-left { animation: shuffle-left 1.5s ease-in-out infinite; }
+.shuffle-right { animation: shuffle-right 1.5s ease-in-out infinite; }
+.shuffle-spin { animation: shuffle-spin 1.5s ease-in-out infinite; }
+
+/* 카드 뒤집기(뒷면 → 앞면) */
+.flip-scene { perspective: 900px; }
+.flip-card {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.22, 0.8, 0.24, 1);
+}
+.flip-card.is-flipped { transform: rotateY(180deg); }
+.flip-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.flip-front { transform: rotateY(180deg); }
+
+/* 인트로 카드 부채(owner 2026-10-20): 겹친 더미 → 부채로 펼침 → 한 장씩 앞으로 나와 크게 돌며 앞면 → 제자리.
+   카드 130px(2:3), 나온 카드는 1.3배(약 170px) — 제목을 가리지 않게 부채 상자(330px, 위 여백 30px) 안에서만 움직인다. 들어갈 때는 먼저 뒤집고 돌아가고, 나올 때는 먼저 나온 뒤 뒤집는다. */
+.intro-fan { position: relative; width: 100%; max-width: 380px; height: 330px; margin-top: 30px; perspective: 1200px; }
+.intro-fan-card {
+  position: absolute; left: 50%; bottom: 50px; width: 130px; aspect-ratio: 2 / 3; margin-left: -65px;
+  transform-origin: 50% 150%;
+  transform: rotate(0deg);
+  transition: transform 0.55s cubic-bezier(0.22, 0.8, 0.24, 1) 0.2s;
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.35));
+}
+.intro-fan.is-spread .intro-fan-card { transform: rotate(var(--a)); transition-delay: var(--d); }
+.intro-fan.is-spread .intro-fan-card.is-on {
+  transform: rotate(0deg) translateY(-18px) scale(1.3);
+  transition-delay: 0s;
+  filter: drop-shadow(0 0 26px rgba(227, 198, 142, 0.55));
+}
+.intro-fan-inner { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.45, 0, 0.25, 1); }
+.intro-fan-card.is-on .intro-fan-inner { transform: rotateY(180deg); transition-delay: 0.25s; }
+.intro-fan-face { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 6%; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.intro-fan-front { transform: rotateY(180deg); }
+@media (prefers-reduced-motion: reduce) {
+  .intro-fan-card, .intro-fan-inner { transition: none; }
+}
+
+/* 뒤집는 순간 새벽 광채 */
+@keyframes dawn-glow {
+  0% { opacity: 0; transform: scale(0.6); }
+  40% { opacity: 1; }
+  100% { opacity: 0; transform: scale(1.5); }
+}
+.dawn-glow {
+  position: absolute;
+  inset: -40%;
+  background: radial-gradient(circle, var(--dawn-peach) 0%, rgba(250, 228, 205, 0) 65%);
+  animation: dawn-glow 0.9s ease-out forwards;
+  pointer-events: none;
+}
+
+/* 대기 엠블럼 숨쉬기 */
+@keyframes breathe {
+  0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.8; }
+  50% { transform: scale(1.06) rotate(8deg); opacity: 1; }
+}
+.breathe { animation: breathe 3.2s ease-in-out infinite; }
+
+/* 인트로 바다 친구들 지나가기 (디자인 가이드 5-1) */
+@keyframes swim-ltr {
+  0% { transform: translateX(-60vw); opacity: 0; }
+  12% { opacity: 1; }
+  45%, 55% { transform: translateX(-4vw); }
+  88% { opacity: 1; }
+  100% { transform: translateX(60vw); opacity: 0; }
+}
+@keyframes swim-rtl {
+  0% { transform: translateX(60vw); opacity: 0; }
+  12% { opacity: 1; }
+  45%, 55% { transform: translateX(4vw); }
+  88% { opacity: 1; }
+  100% { transform: translateX(-60vw); opacity: 0; }
+}
+@keyframes bob {
+  0%, 100% { transform: translateY(-10px) rotate(-3deg); }
+  50% { transform: translateY(10px) rotate(3deg); }
+}
+@keyframes fade-inout {
+  0%, 100% { opacity: 0; }
+  20%, 80% { opacity: 1; }
+}
+.swim-ltr { animation: swim-ltr 4.2s cubic-bezier(0.3, 0.6, 0.7, 0.4) forwards; }
+.swim-rtl { animation: swim-rtl 4.2s cubic-bezier(0.3, 0.6, 0.7, 0.4) forwards; }
+.bob { animation: bob 1.6s ease-in-out infinite; }
+
+@keyframes fade-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+.fade-up { animation: fade-up 0.5s ease-out both; }
+
+/* 움직임 줄이기: 셔플·회전·헤엄 대신 페이드(셔플 최소 3초는 화면 코드가 유지) */
+@media (prefers-reduced-motion: reduce) {
+  .shuffle-left, .shuffle-right, .shuffle-spin, .bob, .breathe, .star, .wait-emb, .mystic-ring-dash, .mystic-orbit-cards, .mystic-orbit-stars, .mystic-star { animation: none; }
+  .mystic-line { animation: mystic-in 0.6s ease-out; }
+  .shuffle-zone, .shuffle-zone.is-done .shuffle-shine { transition: opacity 0.3s; animation: none; }
+  .shuffle-zone.is-leaving { transform: none; }
+  /* 움직임 대신 페이드(스펙 7.4) */
+  .shuffle-left, .shuffle-right, .shuffle-spin { animation: fade-pulse 1.5s ease-in-out infinite; }
+  .swim-ltr, .swim-rtl { animation: fade-inout 4.2s ease-in-out forwards; }
+  .flip-card { transition: opacity 0.3s; }
+  .dawn-glow { animation: none; display: none; }
+}
+
+/* 뽑은 카드가 칸으로 날아들기(디자인 가이드 4장) — 이어서 SlotFlip이 뒤집는다 */
+@keyframes slot-fly {
+  from { translate: 0 70px; scale: 0.85; opacity: 0.2; }
+  to { translate: 0 0; scale: 1; opacity: 1; }
+}
+.slot-fly { animation: slot-fly 0.4s cubic-bezier(0.22, 0.8, 0.24, 1) both; }
+@media (prefers-reduced-motion: reduce) { .slot-fly { animation: none; } }
+
+/* 다 뽑은 뒤 세 장 뒤로 번지는 새벽빛(디자인 가이드 4장 "다 뽑음") */
+@keyframes reveal-dawn { from { opacity: 0; transform: scale(0.7); } to { opacity: 1; transform: scale(1); } }
+.reveal-dawn {
+  position: absolute;
+  inset: -18% -12%;
+  z-index: -1;
+  background: radial-gradient(ellipse at center, rgba(250, 228, 205, 0.32) 0%, rgba(250, 228, 205, 0.1) 45%, rgba(250, 228, 205, 0) 70%);
+  animation: reveal-dawn 1.2s ease-out both;
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) { .reveal-dawn { animation: none; } }
