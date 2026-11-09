@@ -14,6 +14,7 @@ import { api, ApiError, claimIfGuest } from "@/lib/client/api";
 import { getRealSession } from "@/lib/supabase/browser";
 import { REPORT_ORDER_NAME_EN, REPORT_PRICE_USD } from "@/lib/billing/pricing";
 import { CHECKOUT_EN as T } from "@/lib/i18n/checkoutEn";
+import { KO_HOST } from "@/lib/site/routing";
 import { Stars } from "../Cards";
 import PageFoot from "../PageFoot";
 
@@ -46,17 +47,57 @@ export default function CheckoutPageEn({ id, page }: { id: string; page: number 
   const CLIENT_KEY = cfg?.currency === "USD" ? cfg.clientKey : null; // 달러 상점 키만 쓴다
   const KEY_KIND = CLIENT_KEY ? cfg?.keyKind ?? null : null;
 
+  // 결제 화면 준비: 로그인 확인 → 결과를 계정에 붙이기 → 결제 설정(통화·키) 받기.
+  // 2026-11-09: 어느 단계든 실패·지연되면 'Checking…'에 멈추지 않고 이유를 보여 준다(단계 이름을 괄호로 — 문의 때 원인 찾기용).
   useEffect(() => {
-    void getRealSession().then(async (s) => {
-      if (!s) return router.replace(`/en/login?next=${encodeURIComponent(`/en/checkout/${id}?page=${page}`)}`);
-      await claimIfGuest(id);
-      const c = await api<PayConfig>(`/api/tarot/session/${id}/pay-config`).catch(() => null);
-      // 한국어(원화) 결과면 한국어 결제 화면으로
-      if (c?.currency === "KRW") return router.replace(`/checkout/${id}?page=${page}`);
-      setCfg(c);
-      setCustomerKey(s.user.id);
+    let done = false;
+    let step = "session";
+    const fail = (why: string) => {
+      if (done) return;
+      done = true;
+      setError(`${T.checkFailed} (${why})`);
       setChecked(true);
-    });
+    };
+    const timer = setTimeout(() => fail(`timeout:${step}`), 15000);
+    void (async () => {
+      try {
+        const s = await getRealSession();
+        if (done) return;
+        if (!s) {
+          done = true;
+          return router.replace(`/en/login?next=${encodeURIComponent(`/en/checkout/${id}?page=${page}`)}`);
+        }
+        step = "claim";
+        await claimIfGuest(id);
+        step = "pay-config";
+        let c: PayConfig | null = null;
+        try {
+          c = await api<PayConfig>(`/api/tarot/session/${id}/pay-config`);
+        } catch (e) {
+          return fail(`pay-config:${e instanceof ApiError ? `${e.status} ${e.message}` : "network"}`);
+        }
+        if (done) return;
+        // 한국어(원화) 결과면 한국어 사이트의 결제 화면으로 — 영문 사이트의 /checkout은 다시 /en/checkout으로 돌아오므로
+        // 같은 사이트 안에서 보내면 끝없이 돌며 'Checking…'에 멈춘다(2026-11-09 수정).
+        if (c?.currency === "KRW") {
+          done = true;
+          window.location.replace(`https://${KO_HOST}/checkout/${id}?page=${page}`);
+          return;
+        }
+        done = true;
+        setCfg(c);
+        setCustomerKey(s.user.id);
+        setChecked(true);
+      } catch (e) {
+        fail(`${step}:${e instanceof Error ? e.message.slice(0, 80) : "error"}`);
+      } finally {
+        clearTimeout(timer);
+      }
+    })();
+    return () => {
+      done = true;
+      clearTimeout(timer);
+    };
   }, [router, id, page]);
 
   // 결제위젯 키면 들어오자마자 외화결제 UI를 그린다
@@ -165,7 +206,7 @@ export default function CheckoutPageEn({ id, page }: { id: string; page: number 
             </div>
             {/* 약관·철회권 동의는 토스 결제창 안의 약관 UI에서 받는다(owner 2026-11-08 — 우리 체크박스 없앰) */}
             {/* 해외결제 상점 키가 없거나 알 수 없는 키면 결제를 열지 않는다(한국어 키로 대신하지 않음) */}
-            {!KEY_KIND && <p className="err">{T.notReady}</p>}
+            {!KEY_KIND && !error && <p className="err">{T.notReady}</p>}
             {KEY_KIND === "widget" && (
               <div className="overflow-hidden rounded-2xl bg-white">
                 <div id="toss-en-methods" />

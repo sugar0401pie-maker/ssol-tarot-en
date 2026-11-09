@@ -18,6 +18,8 @@ export const CHECKOUT_EN = {
   opening: "Opening payment…",
   checking: "Checking…",
   notReady: "Payment isn't set up yet.",
+  // 결제 화면 준비가 멈췄을 때(2026-11-09, 08 문서에 없는 오류 문구 — 단계 이름을 괄호로 붙여 문의 때 원인을 찾게)
+  checkFailed: "We couldn't load the checkout. Please refresh this page.",
   widgetFailed: "We couldn't load the payment window. Check your connection and refresh this page.",
   openFailed: "We couldn't open the payment window. Please try again in a moment.",
   // 결제 완료·실패(08 문서). 영수증 이메일 문장은 주문 확인 메일 발송이 생긴 뒤에 붙인다(아직 없음).
