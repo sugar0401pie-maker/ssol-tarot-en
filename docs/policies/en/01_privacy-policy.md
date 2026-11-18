@@ -92,10 +92,11 @@ We use the service providers below to run the Service. They act on our behalf un
 | Google LLC | United States | Sign-in with Google | Sign-in identifiers | When you choose that sign-in |
 | Google LLC (Google Analytics) | United States | Visitor statistics | See the Cookie Policy | Only with your consent |
 | X Corp. | United States | Measuring our X ads | See the Cookie Policy | Only with your consent |
+| Meta Platforms, Inc. | United States | Measuring our Facebook and Instagram ads | See the Cookie Policy | When you use the Service |
 | OpenAI, L.L.C. | United States | Sorts what you write and writes parts of your reading; writes Sowella AI replies | What you wrote, your nickname and your cards; for Sowella AI, the tarot items it uses and your chat messages | Only if you write about your situation, or chat with Sowella AI |
 | Supabase, Inc. and Vercel Inc. for Sowella AI | India (Mumbai region) | Database and hosting for Sowella AI | Your account details, the report items passed to Sowella AI, your chat messages | When you start a chat with Sowella AI |
 
-We never send what you write, your nickname, your cards, your email address or your phone number to Google Analytics or X.
+We never send what you write, your nickname, your cards, your email address or your phone number to Google Analytics, X or Meta.
 
 Data is sent over encrypted connections each time you use the Service, and providers keep it until our contract ends or as their own policies say. OpenAI keeps API data for up to 30 days to detect abuse and then deletes it, and does not use it to train its models. The EU and the UK recognize Korea as giving adequate data protection. For onward transfers to providers outside Korea, we rely on the European Commission's Standard Contractual Clauses or another lawful mechanism. You can refuse analytics and ad cookies; the other transfers are needed to provide the Service.
 

@@ -16,12 +16,15 @@ A cookie is a small text file a website stores in your browser. Pixels (also cal
 | Preference | Remembers your language choice from the language pop-up | SSOL | Yes |
 | Analytics | Shows which pages and steps people use and where they came from | Google LLC (Google Analytics) | Yes |
 | Advertising | Checks whether people who saw our X ads went on to buy | X Corp. (X pixel and Conversions API) | Yes |
+| Advertising | Checks whether people who saw our Facebook or Instagram ads visited, opened checkout or bought | Meta Platforms, Inc. (Meta pixel) | Not yet on this site — manage it in your Meta ad preferences |
 
 **Google Analytics** collects the pages you visit (with result and order numbers hidden), where you came from (UTM tags and the previous site), steps such as starting the test, drawing cards, seeing free results, opening checkout and completing payment with the amount and order number, your device and browser, and your approximate location (country and city). The data goes to Google LLC in the United States and is kept for the retention period we set in Google Analytics. We do not use ad personalization or Google signals. You can also block it with Google's opt-out tool (tools.google.com/dlpage/gaoptout).
 
 **X ad measurement** uses the X pixel (pages visited, cookie, device and browser information) and, when you complete a payment, the X Conversions API (order number, amount, and the ad click ID or your IP address and browser information). The data goes to X Corp. in the United States and is kept under X's privacy policy. You can also turn off personalized ads in your X account under Privacy and safety → Ad preferences.
 
-We never send what you write, your nickname, your cards, your email address or your phone number to Google or X. Refusing analytics or advertising cookies does not affect how you use the Service.
+**Meta ad measurement** uses the Meta pixel (pages visited, seeing a result, opening checkout and completing a payment with the amount and order number, cookie, device and browser information, and your IP address). The data goes to Meta Platforms, Inc. in the United States and is kept under Meta's privacy policy. You can also manage ads in your Facebook or Instagram account under Accounts Center → Ad preferences.
+
+We never send what you write, your nickname, your cards, your email address or your phone number to Google, X or Meta. Refusing analytics or advertising cookies does not affect how you use the Service.
 
 ## Your choices
 

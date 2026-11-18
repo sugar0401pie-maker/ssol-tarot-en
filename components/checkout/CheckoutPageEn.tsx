@@ -15,6 +15,7 @@ import { getRealSession } from "@/lib/supabase/browser";
 import { REPORT_ORDER_NAME_EN, REPORT_PRICE_USD } from "@/lib/billing/pricing";
 import { CHECKOUT_EN as T } from "@/lib/i18n/checkoutEn";
 import { KO_HOST } from "@/lib/site/routing";
+import { metaTrack } from "@/lib/client/metaPixel";
 import { Stars } from "../Cards";
 import PageFoot from "../PageFoot";
 
@@ -99,6 +100,11 @@ export default function CheckoutPageEn({ id, page }: { id: string; page: number 
       clearTimeout(timer);
     };
   }, [router, id, page]);
+
+  // 메타 광고 측정(owner 2026-11-18): 결제 화면 진입 — 결과 번호로 한 번만
+  useEffect(() => {
+    if (checked && !error) metaTrack("InitiateCheckout", { content_name: "tarot_full_report", currency: "USD", value: REPORT_PRICE_USD }, id);
+  }, [checked, error, id]);
 
   // 결제위젯 키면 들어오자마자 외화결제 UI를 그린다
   useEffect(() => {

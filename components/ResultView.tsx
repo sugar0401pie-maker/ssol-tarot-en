@@ -1,6 +1,7 @@
 "use client";
 
 import { usePromo } from "@/lib/client/usePromo";
+import { metaTrack } from "@/lib/client/metaPixel";
 import { PROMO_REPORT_PRICE, REPORT_LIST_PRICE, won, usd, REPORT_PRICE_USD } from "@/lib/billing/pricing";
 import { localePath, type Locale } from "@/lib/i18n/locale";
 import { uiText } from "@/lib/i18n/ui";
@@ -73,6 +74,8 @@ export default function ResultView({ id, copy, opts, initialPage = 1, locale = "
         const r = await api<ResultResponse>(`/api/tarot/session/${id}/result`, { key: loadKey(id) });
         if (stop) return;
         setRes(r);
+        // 메타 광고 측정(owner 2026-11-18): 결과까지 봄 — 결과 번호로 한 번만
+        if ((r as { status?: string }).status === "ready") metaTrack("ViewContent", { content_name: "tarot_result" }, id);
         if (r.status === "preparing") timer = setTimeout(load, 1000);
       } catch (e) {
         if (stop) return;
