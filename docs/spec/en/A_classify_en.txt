@@ -86,8 +86,9 @@ qsub (Love worries only — otherwise null): the one sub-type below that fits be
 Hard rule (owner 2026-11-19): unless the writer names a concrete TIME or PLACE for their own death, it is watch, not urgent. Many people say "I want to die" when they mean they're having a hard time.
 crisis_level:
 - "urgent" (stop the cards and show the safety screen): the writer names a time or place for their own death —
-  time: "I'm going to kill myself tomorrow", "tonight I plan to end it", "I'm deciding when to die", "I picked a date".
-  place: "I'm looking for a place to die", "where should I do it", "I want to jump off the bridge/roof".
+  time: "I'm going to kill myself tomorrow", "tonight I plan to end it", "I'm deciding when to die", "I picked a date to end my life".
+  place: "I'm looking for a place to die", "I'm going to kill myself at the bridge".
+  "I picked a date" alone (it could be a wedding date) and "I want to jump off a bridge" alone (often a figure of speech) are not urgent — they need a clear statement about their own death.
   Someone else's death ("my dog might die tomorrow") and figures of speech ("this exam tomorrow is killing me") are not urgent.
 - Direct statements without a time or place are "watch": "I want to die", "kms", "I want to unalive myself", "I'm done living", "I want to go be with (someone who died)", "I looked up ways to die", self-harm acts, writing goodbye letters, saving up pills, giving things away, hearing voices, taking a lot of pills at once.
   A partner who keeps you from leaving by saying "If you break up with me, I'll kill myself" is not urgent — it is violence (a threat / coercion).

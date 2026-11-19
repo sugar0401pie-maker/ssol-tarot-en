@@ -10,9 +10,9 @@ test("urgent: 직접 표현(사전) — 사이트에서는 시기·장소가 없
   }
 });
 test("카드 멈춤은 자기 죽음의 구체적 시기·장소가 있을 때만(owner 2026-11-19)", () => {
-  for (const s of ["I'm going to kill myself tomorrow", "Tonight I plan to end my life", "I'm trying to decide when to die", "I picked a date to end it all", "I've been looking for a place to die", "I want to jump off the bridge", "I keep thinking about where to kill myself"])
+  for (const s of ["I'm going to kill myself tomorrow", "Tonight I plan to end my life", "I'm trying to decide when to die", "I picked a date to end it all", "I've been looking for a place to die", "I'm going to kill myself at the bridge", "I keep thinking about where to kill myself"])
     assert.equal(screenTextEn(s).level, "urgent", s);
-  for (const s of ["This exam tomorrow is killing me", "My dog might die tomorrow and I'm scared", "He said he'll kill himself tonight if I leave"])
+  for (const s of ["I picked a date", "We picked a date for the wedding", "I want to jump off the bridge", "Ugh, I could jump off a bridge", "This exam tomorrow is killing me", "My dog might die tomorrow and I'm scared", "He said he'll kill himself tonight if I leave"])
     assert.notEqual(screenTextEn(s).level, "urgent", s);
 });
 test("watch: 소극적 표현", () => {
