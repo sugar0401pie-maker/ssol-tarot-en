@@ -4,23 +4,17 @@
 //   → 3) urgent → watch → none, violence(+ threat_reported), fear는 violence가 없을 때만.
 // 결과 모양은 한국어 screenText와 같다(mergeSafety에 그대로 넘김). 영어 사전은 전문가 검수 전 초안(데이터 _note).
 import en from "../../data/en/tarot_data.json" with { type: "json" };
+import { normEn } from "./normEn.ts";
+import { applyPlanRuleEn } from "./concretePlanEn.ts";
 
 type Kw = { urgent?: string[]; watch?: string[]; violence?: string[]; fear?: string[]; exceptions?: string[]; threat_reported?: string[] };
 
-export function normEn(text: string): string {
-  return String(text || "")
-    .toLowerCase()
-    .replace(/[‘’‛′]/g, "'")
-    .replace(/[“”″]/g, '"')
-    .replace(/\bwanna\b/g, "want to")
-    .replace(/\bgonna\b/g, "going to")
-    .replace(/\s+/g, " ")
-    .trim();
-}
+export { normEn };
 
 const compile = (list: string[] | undefined) => (list || []).filter(Boolean).map((s) => new RegExp(s, "gi"));
 
-export function screenTextEn(text: string, kw: Kw = en.safety_keywords as Kw) {
+/** Dictionary screen only (planning test cases check this). */
+export function screenTextEnRaw(text: string, kw: Kw = en.safety_keywords as Kw) {
   const L = { u: compile(kw.urgent), w: compile(kw.watch), v: compile(kw.violence), f: compile(kw.fear), ex: compile(kw.exceptions), tr: compile(kw.threat_reported) };
   const strip = (s: string, list: RegExp[]) => list.reduce((acc, re) => acc.replace(re, " "), s);
   const hit = (list: RegExp[], s: string) => list.filter((re) => { re.lastIndex = 0; return re.test(s); }).map((re) => re.source);
@@ -31,4 +25,9 @@ export function screenTextEn(text: string, kw: Kw = en.safety_keywords as Kw) {
   const f = v.length ? [] : hit(L.f, t);
   const level = u.length ? "urgent" : w.length ? "watch" : "none";
   return { level: level as "urgent" | "watch" | "none", violence: v.length > 0, fear: f.length > 0, matched: [...u, ...w, ...v, ...f] };
+}
+
+/** What the site uses (owner 2026-11-19): urgent only with a concrete time or place for one's own death; other urgent → watch. */
+export function screenTextEn(text: string, kw: Kw = en.safety_keywords as Kw) {
+  return applyPlanRuleEn(screenTextEnRaw(text, kw), text);
 }
