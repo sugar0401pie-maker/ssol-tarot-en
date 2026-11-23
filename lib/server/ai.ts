@@ -1,5 +1,6 @@
 import "server-only";
 import OpenAI from "openai";
+import { recordAiUsage } from "./aiUsage";
 import type { ReasoningEffort } from "openai/resources/shared";
 
 // 타로 앱에서 AI를 부르는 유일한 곳. 모델·회사를 바꿀 때 여기만 고친다.
@@ -43,7 +44,12 @@ export async function generateText(
   }
   // 건당 비용 확인용(스펙 12장 체크리스트): 토큰 수와 모델만 남긴다 — 고민 원문·응답 문장은 절대 로그에 넣지 않는다.
   const u = response.usage;
-  if (u) console.info(`[tarot-ai] ${label} model=${MODEL} in=${u.input_tokens} out=${u.output_tokens} reasoning=${u.output_tokens_details?.reasoning_tokens ?? 0}`);
+  if (u) console.info(`[tarot-ai] ${label} model=${response.model ?? MODEL} in=${u.input_tokens} out=${u.output_tokens} reasoning=${u.output_tokens_details?.reasoning_tokens ?? 0}`);
+  // 실제 토큰 수를 DB에 남긴다(owner 2026-11-23, 한국어 사이트와 같은 표 tarot_ai_usage) — 쓰지 못한 응답도 ok=false로 기록. 글은 남기지 않는다.
+  {
+    const t = response.output_text?.trim();
+    if (u) await recordAiUsage({ kind: "text", stage: label, model: response.model ?? MODEL, inputTokens: u.input_tokens, cachedInputTokens: u.input_tokens_details?.cached_tokens, outputTokens: u.output_tokens, reasoningTokens: u.output_tokens_details?.reasoning_tokens, ok: (!response.status || response.status === "completed") && Boolean(t) });
+  }
   // 길이 한도 등으로 잘린 응답(incomplete)은 쓰지 않는다(스펙 체크리스트 — 저장·노출 금지).
   if (response.status && response.status !== "completed") throw new Error(`AI 응답이 완료되지 않음(${response.status})`);
   const text = response.output_text?.trim();
