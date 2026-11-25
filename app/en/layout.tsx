@@ -33,7 +33,7 @@ export default function EnRootLayout({ children }: LayoutProps<"/en">) {
     <html lang="en" className={`${notoSansKr.variable} ${gowunBatang.variable} h-full antialiased`}>
       <body className="min-h-full">
         {children}
-        <Analytics />
+        <Analytics ads />
         {/* 메타 픽셀(owner 2026-11-18 "영문 사이트에도 픽셀" — 한국어판과 같은 픽셀, 동의 창 없이 바로 켬: owner 선택) */}
         <MetaPixel />
       </body>
