@@ -697,7 +697,7 @@ export async function confirmPayment(userId: string | null, body: { paymentKey?:
   await countEvent("paid");
   // 영문(달러) 주문은 결제가 처음 완료될 때 한 번 주문 확인 이메일(08 §4) — 보내는 일은 라우트가 응답 뒤(after)에
   const orderEmail = currency === "USD" ? { orderId, userId, method, tossEmail, paidAt: new Date(now) } : null;
-  return { ok: true, sessionId: order.session_id, generate: true, orderEmail };
+  return { ok: true, sessionId: order.session_id, generate: true, orderEmail, paidOrder: { orderId, amount: toMajor(currency, order.amount), currency } };
 }
 
 /** 로그인 계정의 이메일(auth). user_metadata는 사용자가 바꿀 수 있어 쓰지 않는다(아스트로 getAccountEmail과 같은 규칙). */

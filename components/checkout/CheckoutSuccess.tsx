@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { api, ApiError } from "@/lib/client/api";
 import { Stars } from "../Cards";
 import { CHECKOUT_EN } from "@/lib/i18n/checkoutEn";
+import { xPurchase } from "@/lib/client/xPixel";
 import { metaTrack } from "@/lib/client/metaPixel";
 
 const KO = { missingInfo: "결제 정보를 확인하지 못했어요.", confirmFailed: "결제를 확인하지 못했어요.", backToReading: "결과로 돌아가기", checkAgain: "결제 다시 확인하기", stuck: "이미 결제가 됐는데 이 화면이 보이면, 결제한 기기·브라우저에서 다시 열어 보시거나 contact@ssolwellness.com으로 알려 주세요.", confirming: "결제를 확인하고 있어요…" };
@@ -39,6 +40,7 @@ export default function CheckoutSuccess({ locale = "ko" }: { locale?: "ko" | "en
       .then((d) => {
         // 메타 광고 측정(owner 2026-11-18): 결제 완료 — 주문 번호로 한 번만(금액은 토스가 돌려준 값, 영문 = USD)
         metaTrack("Purchase", { value: Number(amount), currency: locale === "en" ? "USD" : "KRW", content_name: "tarot_full_report" }, orderId);
+        xPurchase(Number(amount), orderId, locale === "en" ? "USD" : "KRW");
         router.replace(`${P}/result/${d.sessionId}/${page}?opened=1`);
       })
       .catch((e) => {

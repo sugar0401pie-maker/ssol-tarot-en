@@ -4,6 +4,7 @@ import "../globals.css";
 import "../auth.css";
 import Analytics from "@/components/Analytics";
 import MetaPixel from "@/components/MetaPixel";
+import XPixel from "@/components/XPixel";
 import { redirect } from "next/navigation";
 import { EN_PAGES_HIDDEN } from "@/lib/i18n/enAccess";
 
@@ -36,6 +37,7 @@ export default function EnRootLayout({ children }: LayoutProps<"/en">) {
         <Analytics ads />
         {/* 메타 픽셀(owner 2026-11-18 "영문 사이트에도 픽셀" — 한국어판과 같은 픽셀, 동의 창 없이 바로 켬: owner 선택) */}
         <MetaPixel />
+        <XPixel />
       </body>
     </html>
   );
